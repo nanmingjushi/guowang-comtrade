@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="/css/sign-in.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+<main class="form-signin w-100 m-auto">
+
+    <form th:action="@{/login}" method="post">
+<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
+        <img class="mb-4" src="/images/国网logo.jpeg" alt="" width="250" height="200">
+        <h1 class="h3 mb-3 fw-bold">试验录波解析</h1>
+        <h1 class="h3 mb-3 fw-normal">请登录</h1>
+        <div class="form-floating">
+            <input type="text" name="username" class="form-control" id="floatingInput" required>
+            <label for="floatingInput">用户名</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" name="password" class="form-control" id="floatingPassword" required>
+            <label for="floatingPassword">密码</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">登录</button>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+    </form>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</main>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>comtrade文件上传</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="/css/sign-in.css" rel="stylesheet">
+    <script src="/js/FileSaver.js"></script> <!-- 引入 FileSaver.js -->
+  </head>
+
+  <body>
+  <!-- 返回首页的按钮 -->
+    <div class="container mt-3">
+      <a href="/index.html" class="btn btn-primary">返回首页</a>
+    </div>
+    <h1>上传CFG配置文件和DAT数据文件</h1>
+
+    <form id="dataForm" action="/data/processData" method="post" enctype="multipart/form-data">
+      <label for="cfgFile">选择 CFG 文件:</label>
+      <input type="file" id="cfgFile" name="cfgFile" accept=".cfg" required>
+      <br><br>
+
+      <label for="datFile">选择 DAT 文件:</label>
+      <input type="file" id="datFile" name="datFile" accept=".dat" required>
+      <br><br>
+
+      <label for="csvFileName">导出为 CSV 文件:</label>
+      <input type="text" id="csvFileName" name="csvFileName" style="width: 100%;" readonly required>
+      <br><br>
+
+      <button type="submit">提交</button>
+
+      <div id="result"></div>
+    </form>
+
+
+
+    <script>
+      // 自动设置 csvFileName 为 CFG 文件名（去掉后缀）
+      document.getElementById('cfgFile').addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const fileName = file.name.replace(/\.cfg$/i, ''); // 去掉后缀 ".cfg"
+          document.getElementById('csvFileName').value = fileName + '.csv'; // 自动生成 CSV 文件名称
+        }
+      });
+
+
+      // 提交表单并处理文件保存
+      document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 防止默认表单提交
+
+        const formData = new FormData(this);
+
+        fetch('/data/processData', {
+          method: 'POST',
+          body: formData
+        })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('处理失败: ' + response.statusText); // 处理错误状态
+                  }
+                  return response.text(); // 将响应转为文本
+                })
+                .then(message => {
+                  // 显示返回的信息
+                  document.getElementById('result').innerText = message; // 显示返回的消息
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  document.getElementById('result').innerText = '处理失败: ' + error.message; // 显示错误信息
+                });
+      });
+
+
+    </script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

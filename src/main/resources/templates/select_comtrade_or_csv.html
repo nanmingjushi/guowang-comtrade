@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>选择导入Comtrade格式/Csv格式</title>
+
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
+
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+
+            .b-example-divider {
+                height: 3rem;
+                background-color: rgba(0, 0, 0, .1);
+                border: solid rgba(0, 0, 0, .15);
+                border-width: 1px 0;
+                box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+            }
+
+            .b-example-vr {
+                flex-shrink: 0;
+                width: 1.5rem;
+                height: 100vh;
+            }
+
+            .bi {
+                vertical-align: -.125em;
+                fill: currentColor;
+            }
+
+            .nav-scroller {
+                position: relative;
+                z-index: 2;
+                height: 2.75rem;
+                overflow-y: hidden;
+            }
+
+            .nav-scroller .nav {
+                display: flex;
+                flex-wrap: nowrap;
+                padding-bottom: 1rem;
+                margin-top: -1px;
+                overflow-x: auto;
+                text-align: center;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+        </style>
+
+        <link href="/css/features.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- 返回首页的按钮 -->
+        <div class="container mt-3">
+            <a href="/index.html" class="btn btn-primary">返回首页</a>
+        </div>
+        <div class="container px-4 py-5" id="hanging-icons">
+            <h2 class="pb-2 border-bottom">选择导入的文件格式</h2>
+            <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+                <div class="col d-flex align-items-start">
+<!--                    <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">-->
+<!--                        <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>-->
+<!--                    </div>-->
+                    <div>
+                        <h3 class="fs-2">Comtrade 格式</h3>
+                        <p>Comtrade是IEEE标准电力系统暂态数据交换通用格式。标准为电力系统或电力系统模型采集到的暂态波形和事故数据的文件定义了一种格式。该格式意欲提供一种易于说明的数据交换通用格式。IEEE于1991年提出，并于1999进行了修订和完善。 每个COMTRADE记录都有一组最多4个与其相关的文件，4个文件中的每一个都具有一个不同的信息等级。4个文件如下： （a）标题文件 （b）配置文件 （c）数据文件 （d）信息文件。</p>
+                        <a href="/cfg_dat_upload" class="btn btn-primary">
+                            导入 Comtrade 格式文件
+                        </a>
+                    </div>
+                </div>
+                <div class="col d-flex align-items-start">
+<!--                    <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">-->
+<!--                        <svg class="bi" width="1em" height="1em"><use xlink:href="#cpu-fill"/></svg>-->
+<!--                    </div>-->
+                    <div>
+                        <h3 class="fs-2">Csv 格式</h3>
+                        <p>CSV（逗号分隔值）是一种常见的文件格式，用于存储表格数据。它以纯文本形式存储数据，使用逗号作为字段之间的分隔符。</p>
+                        <a href="/csv_upload" class="btn btn-primary">
+                            导入 Csv 格式文件
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script src="/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+
+
+</html>    

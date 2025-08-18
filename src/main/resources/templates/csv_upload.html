@@ -1,0 +1,158 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV文件上传</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="/css/sign-in.css" rel="stylesheet">
+    <script src="/js/FileSaver.js"></script> <!-- 引入 FileSaver.js -->
+
+    <style>
+        /* 将页面主要内容区域设置为弹性布局 */
+        .main-content {
+            display: flex;
+            flex-direction: column; /* 垂直方向排列子元素 */
+        }
+
+        /* 为id为result的div设置样式，使其在弹性布局中可滚动 */
+        #result {
+            max-height: 300px; /* 设置最大高度为300px，你可以根据实际需求调整这个值 */
+            overflow: auto; /* 当内容超出最大高度时，自动出现滚动条 */
+            flex: 1; /* 让该元素在剩余空间中可伸缩 */
+        }
+    </style>
+</head>
+
+<body>
+<!-- 返回首页的按钮 -->
+<div class="container mt-3">
+    <a href="/index.html" class="btn  btn-primary">返回首页</a>
+</div>
+
+
+<div class="container mt-5 main-content">
+    <h1>上传CSV数据文件</h1>
+
+    <form id="csvForm" action="/api/csvProcessData" method="post" enctype="multipart/form-data">
+        <label for="csvFile">选择 CSV 文件:</label>
+        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+        <br><br>
+        <label for="csvFile">基波频率:</label>
+        <input type="number" id="lineFrequency" name="lineFrequency" required>
+        <br><br>
+        <label for="maxSampleFrequency">最大采样频率:</label>
+        <input type="number" id="maxSampleFrequency" name="maxSampleFrequency" required>
+        <br><br>
+        <label for="channelName">输入通道名称:</label>
+        <input type="text" id="channelName" name="channelName" required>
+        <br><br>
+        <button type="submit" class="btn btn-success">提交</button>
+    </form>
+
+    <!-- 显示上传进度 -->
+    <div id="progressContainer" class="mt-3" style="display: none;">
+        <div class="progress">
+            <div id="uploadProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">0%</div>
+        </div>
+    </div>
+
+    <!-- 显示处理结果 -->
+    <pre id="result" class="mt-3 alert" style="display: none;"></pre>
+</div>
+
+<script>
+    document.getElementById('csvForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        const formData = new FormData(); // 确保每次创建新的 FormData 实例
+        const resultDiv = document.getElementById('result');
+        const progressContainer = document.getElementById('progressContainer');
+        const uploadProgress = document.getElementById('uploadProgress');
+
+        // 清空上次的结果内容
+        resultDiv.style.display = 'none';
+        resultDiv.classList.remove('alert-success', 'alert-danger');
+        resultDiv.innerHTML = '';
+
+        // 显示上传进度条
+        progressContainer.style.display = 'block';
+        uploadProgress.style.width = '0%';
+        uploadProgress.textContent = '0%';
+
+        // 获取前端输入的值
+        const lineFrequencyValue = document.getElementById('lineFrequency').value;
+        const maxSampleFrequencyValue = document.getElementById('maxSampleFrequency').value;
+
+        const channelNameInput = document.getElementById('channelName');
+        let channelName = channelNameInput.value.trim(); // 去除首尾空格
+        console.log('获取到的通道名称（清理后）：', channelName);
+
+        // 添加表单数据到 FormData
+        formData.append('csvFile', document.getElementById('csvFile').files[0]); // 添加文件
+        formData.append('lineFrequency', lineFrequencyValue);
+        formData.append('maxSampleFrequency', maxSampleFrequencyValue);
+        formData.append('channelName', channelName);
+
+        // 输出 FormData 内容以进行调试
+        console.log('FormData 内容:');
+        for (const pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
+        }
+
+        // 使用 XMLHttpRequest 上传文件并获取进度
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/csvProcessData', true);
+
+        // 监听进度事件，更新进度条
+        xhr.upload.addEventListener('progress', function (e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                uploadProgress.style.width = percentComplete + '%';
+                uploadProgress.textContent = percentComplete + '%';
+            }
+        });
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                resultDiv.style.display = 'block';
+                resultDiv.classList.add('alert', 'alert-success');
+
+                // 对后端返回的文本进行处理，添加换行
+                let processedResponseText = formatResponseText(xhr.responseText);
+                resultDiv.innerHTML = `<h5>处理结果:</h5>${processedResponseText}`;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.classList.add('alert', 'alert-danger');
+                resultDiv.innerHTML = `<h5>处理失败:</h5><pre>${xhr.statusText}</pre>`;
+            }
+        };
+
+        xhr.onerror = function () {
+            resultDiv.style.display = 'block';
+            resultDiv.classList.add('alert', 'alert-danger');
+            resultDiv.innerHTML = `<h5>上传错误</h5><pre>网络错误，无法完成上传。</pre>`;
+        }
+
+        xhr.send(formData);
+    });
+
+    // 处理后端返回文本，添加换行的函数
+    function formatResponseText(responseText) {
+        let lines = responseText.split(/第 \d+次谐波：/);
+        let formattedText = '';
+
+        for (let i = 0; i < lines.length; i++) {
+            if (i > 0) {
+                formattedText += "<br>第 " + (i + 1) + "次谐波：" + lines[i];
+            } else {
+                formattedText += lines[i];
+            }
+        }
+
+        return formattedText;
+    }
+</script>
+
+</body>
+
+</html>
